@@ -115,7 +115,6 @@ public class MainActivity extends Activity {
                         builder.append(str);
                     }
                     String responseStr = builder.toString();
-                    System.out.println(responseStr);
                     todayWeather = parseXML(responseStr);
                     if(todayWeather != null){
                         Message msg = new Message();

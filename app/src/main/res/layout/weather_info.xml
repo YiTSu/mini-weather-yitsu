@@ -203,7 +203,7 @@
                     android:layout_below="@id/week_today"
                     android:text="-2℃——7℃"
                     android:textColor="@android:color/white"
-                    android:textSize="30sp"/>
+                    android:textSize="25sp"/>
 
                 <TextView
                     android:id="@+id/climate"
