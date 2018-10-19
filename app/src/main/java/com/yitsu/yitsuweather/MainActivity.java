@@ -1,6 +1,7 @@
 package com.yitsu.yitsuweather;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,6 +29,7 @@ import java.net.URL;
 public class MainActivity extends Activity {
     public static final int UPDATE_TODAY_WEATHER = 1;
     private ImageView imgUpdate;
+    private ImageView imgCitySelect;
     private TextView cityTv,timeTv,humidityTv,pmDataTv,pmQualityTv,weekTv,temperatureTv,climateTv,windTv,titleNameTv;
     private Handler mHandler = new Handler(){
         @Override
@@ -48,6 +50,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.weather_info);
 
         imgUpdate = findViewById(R.id.title_update);
+        imgCitySelect = findViewById(R.id.title_city);
         /*
         检查网络状态
          */
@@ -65,7 +68,31 @@ public class MainActivity extends Activity {
                 Toast.makeText(MainActivity.this,"正在刷新",Toast.LENGTH_LONG).show();
             }
         });
+        imgCitySelect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,SelectCityActivity.class);
+                startActivityForResult(intent,1);
+
+            }
+        });
         initView();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode,int resultCode,Intent data){
+        if(requestCode == 1 && resultCode == RESULT_OK){
+            String newCityCode = data.getStringExtra("cityCode");
+
+             /*
+            检查网络状态
+            */
+            if(NetUtil.getNetworkState(this) != NetUtil.NETWORK_NONE){
+                Toast.makeText(MainActivity.this,"网络可用",Toast.LENGTH_LONG).show();
+            }else{
+                Toast.makeText(MainActivity.this,"网络不可用",Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     void initView(){
