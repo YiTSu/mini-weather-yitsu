@@ -1,5 +1,9 @@
 package com.yitsu.yitsuweather.Bean;
 
+
+/*
+此类为CityBean工具类，包含City的构造函数以及Getter和Setter方法
+ */
 public class City {
     private String province;
     private String city;

@@ -1,5 +1,9 @@
 package com.yitsu.yitsuweather.Bean;
 
+
+/*
+此类为TodayWeatherBean工具类,包含TodayWeather的Getter和Setter方法
+ */
 public class TodayWeather {
     private String city;
     private String updatetime;

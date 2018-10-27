@@ -32,6 +32,9 @@ public class MainActivity extends Activity {
     private ImageView imgUpdate;
     private ImageView imgCitySelect;
     private TextView cityTv,timeTv,humidityTv,pmDataTv,pmQualityTv,weekTv,temperatureTv,climateTv,windTv,titleNameTv;
+    /*
+    通过Handler处理非主线程的传递过来的消息，通过Message得到消息内容，从而进行天气更新操作
+     */
     private Handler mHandler = new Handler(){
         @Override
         public void handleMessage(Message msg){
@@ -54,13 +57,18 @@ public class MainActivity extends Activity {
         imgCitySelect = findViewById(R.id.title_city);
         sharedPreferences = getSharedPreferences("config",MODE_PRIVATE);
         /*
-        检查网络状态
+        检查网络状态，通过Toast反馈当前的网络是否可用
          */
         if(NetUtil.getNetworkState(this) != NetUtil.NETWORK_NONE){
             Toast.makeText(MainActivity.this,"网络可用",Toast.LENGTH_LONG).show();
         }else{
             Toast.makeText(MainActivity.this,"网络不可用",Toast.LENGTH_SHORT).show();
         }
+        /*
+        响应右上角的天气更新按钮进行天气的更新，我们通过将选择城市界面得到的cityCode存入SharedPreferences中，
+        当用户点击右上角的天气更新按钮时，从SharedPreferences得到上次存下来的cityCode，进行对应城市天气状况的更新
+        若SharedPreferences为空，则更新默认城市（北京）的天气
+         */
         imgUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,7 +77,7 @@ public class MainActivity extends Activity {
                 Toast.makeText(MainActivity.this,"正在刷新",Toast.LENGTH_LONG).show();
             }
         });
-        imgCitySelect.setOnClickListener(new View.OnClickListener() {
+        imgCitySelect.setOnClickListener(new View.OnClickListener() { //打开新的Activity选择新的城市
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this,SelectCityActivity.class);
@@ -80,6 +88,10 @@ public class MainActivity extends Activity {
         initView();
     }
 
+    /*
+    通过选择城市界面返回得到的cityCode，进行对应城市天气状况的更新，另外将选择城市界面得到的cityCode存入
+    SharedPreferences中，确保当用户点击右上角更新按钮时，更新对应城市的天气状况而不是默认城市(北京)的天气
+     */
     @Override
     protected void onActivityResult(int requestCode,int resultCode,Intent data){
         if(requestCode == 1 && resultCode == RESULT_OK){
@@ -89,7 +101,7 @@ public class MainActivity extends Activity {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("main_city_code",newCityCode).apply();
              /*
-            检查网络状态
+            检查网络状态，通过Toast反馈当前的网络是否可用
             */
             if(NetUtil.getNetworkState(this) != NetUtil.NETWORK_NONE){
                 Toast.makeText(MainActivity.this,"网络可用",Toast.LENGTH_LONG).show();
@@ -99,6 +111,9 @@ public class MainActivity extends Activity {
         }
     }
 
+    /*
+    初始化UI界面，将其全部置为N/A
+     */
     void initView(){
         cityTv = findViewById(R.id.city);
         timeTv = findViewById(R.id.time);
@@ -122,7 +137,10 @@ public class MainActivity extends Activity {
         titleNameTv.setText("N/A");
     }
 
-
+    /*
+    通过cityCode,利用查询天气的网络API在子线程查询天气状况，返回XML数据，利用XML解析函数解析得到todayWeather实例，
+    并通过Message消息机制传递给主线程（由于本方法涉及到网络操作，所以要注意try、catch的异常处理函数块）
+     */
     private void queryWeatherCode(String cityCode){
         final String address = "http://wthrcdn.etouch.cn/WeatherApi?citykey="+cityCode;
         //final String address = "http://www.baidu.com";
@@ -132,12 +150,18 @@ public class MainActivity extends Activity {
                 HttpURLConnection connection = null;
                 TodayWeather todayWeather = null;
                 try{
-                    URL url = new URL(address);
+                    URL url = new URL(address); //通过网络地址生成URL
+                    /*
+                    进行网络操作的连接及参数的设置
+                     */
                     connection = (HttpURLConnection) url.openConnection();
                     connection.connect();
                     connection.setRequestMethod("GET");
                     connection.setConnectTimeout(8000);
                     connection.setReadTimeout(8000);
+                    /*
+                    基本的数据流操作
+                     */
                     InputStream inputStream = connection.getInputStream();
                     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
                     StringBuilder builder = new StringBuilder();
@@ -165,6 +189,10 @@ public class MainActivity extends Activity {
         }).start();
     }
 
+    /*
+    利用XML解析工具一步一步解析XML数据，得到每一项的天气状况，通过TodayWeatherBean工具类的Setter函数存储每一项天气状况，
+    最终返回包含各项天气信息的TodayWeather实例
+     */
     private TodayWeather parseXML(String xmlData){
 
         TodayWeather todayWeather = null;
@@ -260,6 +288,9 @@ public class MainActivity extends Activity {
         return todayWeather;
     }
 
+    /*
+    更新UI界面，利用TodayWeatherBean工具类简易地传递天气内容,通过Getter方法得到不同方面的天气状况并进行显示，更新当前的天气
+     */
     void updateTodayWeather(TodayWeather todayWeather){
         titleNameTv.setText(todayWeather.getCity()+"天气");
         cityTv.setText(todayWeather.getCity());

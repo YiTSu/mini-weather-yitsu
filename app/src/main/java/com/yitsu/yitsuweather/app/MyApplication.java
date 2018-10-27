@@ -28,7 +28,7 @@ public class MyApplication extends Application {
         initCityList();
     }
 
-    private void initCityList(){
+    private void initCityList(){ //为防止主线程阻塞，在子线程中进行CityList的初始化
         mCityList = new ArrayList<>();
         new Thread(new Runnable() {
             @Override
@@ -44,9 +44,15 @@ public class MyApplication extends Application {
         }
         return true;
     }
-    public List<City> getCityList(){
+    public List<City> getCityList(){ //通过调用此函数可得到CityList
         return mCityList;
     }
+
+    /*
+    此函数主要作用是打开CityDB，返回值为CityDB
+    路径上如果数据库已经存在，则直接通过此路径创建CityDB操作对象，
+    否则从资源文件中读取数据库内容，并在此路径上建立数据库，然后利用此路径创建CityDB操作对象
+     */
     private CityDB openCityDB(){
         String path = "/data" +
                 Environment.getDataDirectory().getAbsolutePath() +
@@ -54,7 +60,7 @@ public class MyApplication extends Application {
                 File.separator + "yitsuDatabase" +
                 File.separator + CityDB.CITY_DB_NAME;
         File db = new File(path);
-        if(!db.exists()){
+        if(!db.exists()){ //如果数据库不存在
             String pathfolder = "/data" +
                     Environment.getDataDirectory().getAbsolutePath() +
                     File.separator + getPackageName() +
@@ -64,7 +70,7 @@ public class MyApplication extends Application {
             if(!dirFirstFolder.exists()){
                 dirFirstFolder.mkdirs();
             }
-            try{
+            try{ //从资源文件中读取数据库内容并写到对应路径下
                 InputStream is = getAssets().open("city.db");
                 FileOutputStream fos = new FileOutputStream(db);
                 byte[] buffer = new byte[1024];
@@ -82,7 +88,7 @@ public class MyApplication extends Application {
         }
         return new CityDB(this,path);
     }
-    public static MyApplication getInstance(){
+    public static MyApplication getInstance(){ //MyApplication的单例模式，通过此方法得到MyApplication类的实例
         return mApplication;
     }
 
