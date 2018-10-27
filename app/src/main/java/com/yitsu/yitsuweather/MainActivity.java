@@ -27,6 +27,7 @@ import java.net.URL;
 
 
 public class MainActivity extends Activity {
+    SharedPreferences sharedPreferences;
     public static final int UPDATE_TODAY_WEATHER = 1;
     private ImageView imgUpdate;
     private ImageView imgCitySelect;
@@ -51,6 +52,7 @@ public class MainActivity extends Activity {
 
         imgUpdate = findViewById(R.id.title_update);
         imgCitySelect = findViewById(R.id.title_city);
+        sharedPreferences = getSharedPreferences("config",MODE_PRIVATE);
         /*
         检查网络状态
          */
@@ -62,7 +64,6 @@ public class MainActivity extends Activity {
         imgUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences sharedPreferences = getSharedPreferences("config",MODE_PRIVATE);
                 String cityCode = sharedPreferences.getString("main_city_code","101010100");
                 queryWeatherCode(cityCode);
                 Toast.makeText(MainActivity.this,"正在刷新",Toast.LENGTH_LONG).show();
@@ -83,7 +84,10 @@ public class MainActivity extends Activity {
     protected void onActivityResult(int requestCode,int resultCode,Intent data){
         if(requestCode == 1 && resultCode == RESULT_OK){
             String newCityCode = data.getStringExtra("cityCode");
-
+            queryWeatherCode(newCityCode);
+            Toast.makeText(MainActivity.this,"正在刷新",Toast.LENGTH_LONG).show();
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("main_city_code",newCityCode).apply();
              /*
             检查网络状态
             */

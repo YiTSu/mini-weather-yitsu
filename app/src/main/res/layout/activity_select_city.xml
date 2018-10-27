@@ -4,6 +4,7 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
+        android:id="@+id/toolBar"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:background="#ffcd2626">
@@ -32,5 +33,12 @@
             android:layout_centerVertical="true"
             android:background="#A71717"/>
     </RelativeLayout>
+
+    <ListView
+        android:id="@+id/list_view_select_city"
+        android:layout_below="@id/toolBar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
 
 </RelativeLayout>
