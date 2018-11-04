@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/title"
+    android:layout_width="match_parent"
+    android:layout_height="45dp"
+    android:background="#ffcd2626">
+
+    <ImageView
+        android:id="@+id/title_city"
+        android:layout_width="45dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/title_city" />
+
+    <ImageView
+        android:id="@+id/city_seperator"
+        android:layout_width="1dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="2dp"
+        android:layout_toRightOf="@+id/title_city"
+        android:background="#A71717" />
+
+    <TextView
+        android:id="@+id/title_name"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@+id/city_seperator"
+        android:gravity="center_vertical"
+        android:paddingLeft="5dp"
+        android:text="北京天气"
+        android:textColor="#ffffff"
+        android:textSize="20sp" />
+
+    <ImageView
+        android:id="@+id/title_update"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="center"
+        android:src="@drawable/title_update"
+        android:visibility="visible" />
+
+    <ProgressBar
+        android:id="@+id/title_update_progress"
+        style="@style/title_update_progressbar_style"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignParentRight="true"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/title_share"
+        android:layout_width="45dp"
+        android:layout_height="match_parent"
+        android:layout_toLeftOf="@+id/title_update"
+        android:src="@drawable/title_share" />
+
+    <ImageView
+        android:id="@+id/title_location"
+        android:layout_width="45dp"
+        android:layout_height="match_parent"
+        android:layout_toLeftOf="@+id/title_share"
+        android:src="@drawable/base_action_bar_action_city" />
+
+</RelativeLayout>

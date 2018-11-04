@@ -9,6 +9,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +32,7 @@ public class MainActivity extends Activity {
     public static final int UPDATE_TODAY_WEATHER = 1;
     private ImageView imgUpdate;
     private ImageView imgCitySelect;
+    private ProgressBar titleUpdateProgress;
     private TextView cityTv,timeTv,humidityTv,pmDataTv,pmQualityTv,weekTv,temperatureTv,climateTv,windTv,titleNameTv;
     /*
     通过Handler处理非主线程的传递过来的消息，通过Message得到消息内容，从而进行天气更新操作
@@ -41,6 +43,8 @@ public class MainActivity extends Activity {
             switch(msg.what){
                 case UPDATE_TODAY_WEATHER:
                     updateTodayWeather((TodayWeather)msg.obj);
+                    titleUpdateProgress.setVisibility(View.GONE);
+                    imgUpdate.setVisibility(View.VISIBLE);
                     break;
                 default:
                     break;
@@ -55,6 +59,7 @@ public class MainActivity extends Activity {
 
         imgUpdate = findViewById(R.id.title_update);
         imgCitySelect = findViewById(R.id.title_city);
+        titleUpdateProgress = findViewById(R.id.title_update_progress);
         sharedPreferences = getSharedPreferences("config",MODE_PRIVATE);
         /*
         检查网络状态，通过Toast反馈当前的网络是否可用
@@ -73,6 +78,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 String cityCode = sharedPreferences.getString("main_city_code","101010100");
+                imgUpdate.setVisibility(View.INVISIBLE);
+                titleUpdateProgress.setVisibility(View.VISIBLE);
                 queryWeatherCode(cityCode);
                 Toast.makeText(MainActivity.this,"正在刷新",Toast.LENGTH_LONG).show();
             }
